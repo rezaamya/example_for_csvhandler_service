@@ -5,6 +5,7 @@ import appConfig from './configs/app.config';
 import { configValidator } from './configs/config.validation';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmDataSourceOptions } from './configs/typeorm.config';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { typeOrmDataSourceOptions } from './configs/typeorm.config';
       validate: configValidator,
     }),
     TypeOrmModule.forRoot(typeOrmDataSourceOptions),
+    AuthModule,
   ],
   controllers: [],
   providers: [],
