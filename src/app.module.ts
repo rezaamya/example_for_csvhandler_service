@@ -6,7 +6,7 @@ import { configValidator } from './configs/config.validation';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmDataSourceOptions } from './configs/typeorm.config';
 import { AuthModule } from './modules/auth/auth.module';
-import { JwtModule } from '@nestjs/jwt';
+import { CsvModule } from './modules/csv/csv.module';
 
 @Module({
   imports: [
@@ -18,6 +18,7 @@ import { JwtModule } from '@nestjs/jwt';
     }),
     TypeOrmModule.forRoot(typeOrmDataSourceOptions),
     AuthModule,
+    CsvModule,
   ],
   controllers: [],
   providers: [],
