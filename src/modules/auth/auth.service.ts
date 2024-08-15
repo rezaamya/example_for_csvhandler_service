@@ -50,7 +50,7 @@ export class AuthService {
       );
     }
 
-    return this.sign({ userId: user.id });
+    return this.sign({ id: user.id });
   }
 
   async verifyToken(token: string) {

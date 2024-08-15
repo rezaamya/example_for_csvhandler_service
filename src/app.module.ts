@@ -6,6 +6,7 @@ import { configValidator } from './configs/config.validation';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmDataSourceOptions } from './configs/typeorm.config';
 import { AuthModule } from './modules/auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [

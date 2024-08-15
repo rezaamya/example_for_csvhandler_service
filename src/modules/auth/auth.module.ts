@@ -4,12 +4,22 @@ import { AuthController } from './auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/user.entity';
 import { JwtModule } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { IAppConfig } from '../../configs/app.config';
 
 @Module({
   imports: [
-    JwtModule.register({
-      secret: 'secret',
-      signOptions: { expiresIn: '1h' },
+    JwtModule.registerAsync({
+      imports: [],
+      global: true,
+      useFactory: async (configService: ConfigService) => {
+        const appConfig = configService.get<IAppConfig>('app');
+        return {
+          secret: appConfig.jwtSecret,
+          signOptions: { expiresIn: `${appConfig.jwtExpiresInSeconds}s` },
+        };
+      },
+      inject: [ConfigService],
     }),
     TypeOrmModule.forFeature([User]),
   ],

@@ -6,6 +6,12 @@ export class EnvironmentVariables {
   APP_PORT: number = 4000;
 
   @IsString()
+  APP_JWT_SECRET: string;
+
+  @IsNumber()
+  APP_JWT_EXPIRES_IN_SECONDS: number = 60 * 60 * 24;
+
+  @IsString()
   POSTGRES_HOST: string = 'localhost';
 
   @IsNumber()
