@@ -54,9 +54,9 @@ export class RabbitMQService {
         this.channel.ack(msg);
       } catch (e) {
         console.error(e);
-        if (e?.code === '23505') {
-          this.channel.nack(msg, false, true);
-          // this.channel.ack(msg);
+        if (e.detail && e.code) {
+          // Database logic errors (e.g. duplicated record, foreign key constraint).
+          this.channel.ack(msg);
         } else {
           this.channel.nack(msg, false, true);
         }

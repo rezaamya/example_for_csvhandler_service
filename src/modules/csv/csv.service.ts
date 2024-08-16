@@ -23,7 +23,8 @@ export class CsvService {
 
       await this.recordRepository.save(records);
     } catch (e) {
-      if (e.detail && e.code === '23505') {
+      if (e.detail && e.code) {
+        // Database logic errors (e.g. duplicated record, foreign key constraint).
         throw new HttpException(e.detail, HttpStatus.BAD_REQUEST);
       }
       throw new HttpException(errorUnableToInsertCsv, HttpStatus.BAD_REQUEST);
