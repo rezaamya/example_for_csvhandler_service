@@ -25,6 +25,18 @@ export class EnvironmentVariables {
 
   @IsString()
   POSTGRES_DB: string;
+
+  @IsNumber()
+  RABBITMQ_PORT: number = 5672;
+
+  @IsString()
+  RABBITMQ_HOST: string = 'localhost';
+
+  @IsString()
+  RABBITMQ_USERNAME: string;
+
+  @IsString()
+  RABBITMQ_PASSWORD: string;
 }
 
 export function configValidator(config: Record<string, unknown>) {
