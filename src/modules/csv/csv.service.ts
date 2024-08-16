@@ -2,8 +2,8 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Record } from './record.entity';
-import { parse, Options as csvParseOptions } from 'csv-parse';
 import { errorUnableToInsertCsv, msgNoRecordFound } from './csv.msg';
+import { CsvUtilitiesService } from '../utils/csv-utilities.service';
 
 @Injectable()
 export class CsvService {
@@ -11,38 +11,14 @@ export class CsvService {
     @InjectRepository(Record)
     private readonly recordRepository: Repository<Record>,
     @Inject('REQUEST') private readonly request: Request,
+    private readonly csvUtilitiesService: CsvUtilitiesService,
   ) {}
 
   async uploadCsv(file: Express.Multer.File, userId: number) {
     try {
-      const records = [];
-      const parser = parse({ bom: true, columns: true } as csvParseOptions);
-
-      //TODO
-      // Save the file on disk and read asynchronously
-      // Currently file is as a buffer in memory, so there is no benefit here to store it on disk
-      file.buffer
-        .toString('utf8')
-        .split('\n')
-        .forEach((line) => parser.write(line));
-      parser.end();
-
-      parser.on('readable', () => {
-        let record;
-        while ((record = parser.read())) {
-          records.push({ ...record, user: { id: userId } });
-        }
-      });
-
-      parser.on('error', (err) => {
-        console.error(err);
-        throw err;
-      });
-
-      await new Promise((resolve) => {
-        parser.on('end', async () => {
-          resolve(true);
-        });
+      const csvRows = await this.csvUtilitiesService.parseCSV(file);
+      const records = csvRows.map((row) => {
+        return { ...row, user: { id: userId } };
       });
 
       await this.recordRepository.save(records);
