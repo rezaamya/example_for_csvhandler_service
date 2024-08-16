@@ -25,6 +25,8 @@ export class RabbitMQService {
   async onModuleInit() {
     await this.connectToRabbitMQ();
     await this.listenToQueue1();
+    await this.listenToQueue2();
+    await this.listenToQueue3();
   }
 
   private async connectToRabbitMQ() {
@@ -33,7 +35,9 @@ export class RabbitMQService {
       `amqp://${rabbitmqConfig.username}:${rabbitmqConfig.password}@${rabbitmqConfig.host}:${rabbitmqConfig.port}`,
     );
     this.channel = await this.connection.createChannel();
-    await this.channel.assertQueue('queue1');
+    await this.channel.assertQueue('queue1', { durable: true });
+    await this.channel.assertQueue('queue2', { durable: true });
+    await this.channel.assertQueue('queue3', { durable: true });
   }
 
   private async listenToQueue1() {
@@ -44,13 +48,58 @@ export class RabbitMQService {
         const records = csvRows.map((row) => {
           return { ...row, user: { id: userId } };
         });
-        await this.recordRepository.save(records);
+
+        // It will insert all records or none (in face with exception)
+        await this.recordRepository.insert(records);
+        this.channel.ack(msg);
+      } catch (e) {
+        console.error(e);
+        if (e?.code === '23505') {
+          this.channel.nack(msg, false, true);
+          // this.channel.ack(msg);
+        } else {
+          this.channel.nack(msg, false, true);
+        }
+      }
+    });
+  }
+
+  private async listenToQueue2() {
+    await this.channel.consume('queue2', async (msg) => {
+      try {
+        const { userId, file } = JSON.parse(msg.content.toString());
+        const csvRows = await this.csvUtilitiesService.parseCSV(file);
+        for (const row of csvRows) {
+          this.channel.sendToQueue(
+            'queue3',
+            Buffer.from(JSON.stringify({ ...row, user: { id: userId } })),
+          );
+        }
         this.channel.ack(msg);
       } catch (e) {
         console.error(e);
         //TODO
         // Should we keep the message in the queue?
+        this.channel.nack(msg, false, true);
+        // this.channel.ack(msg);
+      }
+    });
+  }
+
+  private async listenToQueue3() {
+    await this.channel.consume('queue3', async (msg) => {
+      try {
+        const record = JSON.parse(msg.content.toString());
+        // It will insert records one by one and skip those records who faced with error
+        await this.recordRepository.insert(record);
         this.channel.ack(msg);
+      } catch (e) {
+        console.error(e);
+        if (e?.code === '23505') {
+          this.channel.ack(msg);
+        } else {
+          this.channel.nack(msg, false, true);
+        }
       }
     });
   }
