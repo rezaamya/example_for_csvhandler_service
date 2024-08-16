@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../users/user.entity';
-import * as bcrypt from 'bcrypt';
+import * as bcryptjs from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import {
   errorEmailIsAlreadyInUse,
@@ -26,7 +26,7 @@ export class AuthService {
 
     const user = new User();
     user.email = email;
-    user.password = await bcrypt.hash(password, 10);
+    user.password = await bcryptjs.hash(password, 10);
 
     return this.userRepository.save(user);
   }
@@ -41,7 +41,7 @@ export class AuthService {
       );
     }
 
-    const isValid = await bcrypt.compare(password, user.password);
+    const isValid = await bcryptjs.compare(password, user.password);
 
     if (!isValid) {
       throw new HttpException(
