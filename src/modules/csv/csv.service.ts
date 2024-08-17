@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Record } from './record.entity';
@@ -10,7 +10,6 @@ export class CsvService {
   constructor(
     @InjectRepository(Record)
     private readonly recordRepository: Repository<Record>,
-    @Inject('REQUEST') private readonly request: Request,
     private readonly csvUtilitiesService: CsvUtilitiesService,
   ) {}
 

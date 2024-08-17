@@ -29,7 +29,7 @@ export class RabbitMQService {
     await this.listenToQueue3();
   }
 
-  private async connectToRabbitMQ() {
+  public async connectToRabbitMQ() {
     const rabbitmqConfig = this.configService.get<IRabbitmqConfig>('rabbitmq');
     this.connection = await connect(
       `amqp://${rabbitmqConfig.username}:${rabbitmqConfig.password}@${rabbitmqConfig.host}:${rabbitmqConfig.port}`,
@@ -40,7 +40,7 @@ export class RabbitMQService {
     await this.channel.assertQueue('queue3', { durable: true });
   }
 
-  private async listenToQueue1() {
+  public async listenToQueue1() {
     await this.channel.consume('queue1', async (msg) => {
       try {
         const { userId, file } = JSON.parse(msg.content.toString());
@@ -64,7 +64,7 @@ export class RabbitMQService {
     });
   }
 
-  private async listenToQueue2() {
+  public async listenToQueue2() {
     await this.channel.consume('queue2', async (msg) => {
       try {
         const { userId, file } = JSON.parse(msg.content.toString());
@@ -86,7 +86,7 @@ export class RabbitMQService {
     });
   }
 
-  private async listenToQueue3() {
+  public async listenToQueue3() {
     await this.channel.consume('queue3', async (msg) => {
       try {
         const record = JSON.parse(msg.content.toString());
@@ -95,7 +95,7 @@ export class RabbitMQService {
         this.channel.ack(msg);
       } catch (e) {
         console.error(e);
-        if (e?.code === '23505') {
+        if (e.detail && e.code === '23505') {
           this.channel.ack(msg);
         } else {
           this.channel.nack(msg, false, true);
