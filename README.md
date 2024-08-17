@@ -1,73 +1,67 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# NestJS CSV Handler Service
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This is a NestJS-based CSV handler service that allows you to handle CSV files and process them using RabbitMQ and PostgreSQL.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Prerequisites
 
-## Description
+Before running the app, make sure you have the following installed:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+    1) Node.js (version 20.x.x or higher)
+    2) Docker and Docker Compose
 
-## Installation
+## Environment Variables
 
-```bash
-$ npm install
+The app requires several environment variables to be set in a `.env` file. Create a `.env` file in the root directory of the project and set the following variables:
+```
+# Application
+APP_PORT=4000
+APP_JWT_SECRET = MY_SECRET
+
+# Database
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5438
+POSTGRES_USER=csvhandler
+POSTGRES_PASSWORD=password
+POSTGRES_DB=csvhandler
+
+# RabbitMQ
+RABBITMQ_PORT = 5672
+RABBITMQ_HOST = localhost
+RABBITMQ_USERNAME = rabbit
+RABBITMQ_PASSWORD = password
 ```
 
-## Running the app
+## Running the App
 
-```bash
-# development
-$ npm run start
+You can run the app in two ways:
 
-# watch mode
-$ npm run start:dev
+### 1. Using Docker Compose
 
-# production mode
-$ npm run start:prod
-```
+To run the app using Docker Compose, follow these steps:
 
-## Test
+1) Open a terminal in the root directory of the project.
+2) Run `docker compose up`.
+3) The app, along with PostgreSQL and RabbitMQ, will start running.
+4) Access the API documentation at bottom of this page.
 
-```bash
-# unit tests
-$ npm run test
 
-# e2e tests
-$ npm run test:e2e
+### 2. Manually
 
-# test coverage
-$ npm run test:cov
-```
+To run the app manually, follow these steps:
 
-## Support
+1) Open a terminal in the root directory of the project.
+2) Run `docker compose up` to start the PostgreSQL and RabbitMQ containers.
+    Stop the app container by running `docker stop csv-handler-service-app`.
+3) Run the app manually by running `npm install` and `npm run start:dev` or `npm run start:prod`.
+    The app will start running.
+4) Test the app using `npm run test`.
+5) Access the API documentation at bottom of this page.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## API Documentation
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+The API documentation is available at https://documenter.getpostman.com/view/28090047/2sA3s9C84P.
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+This project is licensed under the MIT License. See the LICENSE file for details.
+
