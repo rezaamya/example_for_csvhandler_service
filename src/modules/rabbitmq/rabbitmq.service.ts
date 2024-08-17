@@ -95,7 +95,7 @@ export class RabbitMQService {
         this.channel.ack(msg);
       } catch (e) {
         console.error(e);
-        if (e.detail && e.code === '23505') {
+        if (e.detail && e.code) {
           this.channel.ack(msg);
         } else {
           this.channel.nack(msg, false, true);
